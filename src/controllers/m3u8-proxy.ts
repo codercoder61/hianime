@@ -31,7 +31,14 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
     const transform = new LineTransform(baseUrl);
     response.data.pipe(transform).pipe(res);
   } catch (error: any) {
-    console.log(error.message);
+    if (error.response) {
+  console.error("Status:", error.response.status);
+  console.error("Headers:", error.response.headers);
+  error.response.data.on('data', chunk => console.error(chunk.toString()));
+} else {
+  console.error(error);
+}
+
     res.status(500).send('Internal Server Error');
   }
 }
