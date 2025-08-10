@@ -9,7 +9,7 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
     if (!url) return res.status(400).json({ error: "url is required" });
 
     const isStaticFiles = allowedExtensions.some(ext => url.endsWith(ext));
-    const baseUrl = url.replace(/[^/]+$/, "");
+    const baseUrl = url;
 
     console.log("Proxying:", url);
 
