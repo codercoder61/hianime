@@ -12,7 +12,10 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
 
     const response = await axios.get(url, {
       responseType: 'stream',
-      headers: { Accept: "*/*", Referer: "https://megacloud.club/" }
+      headers: { Accept: "*/*", Referer: "https://cdn.dotstream.buzz/",
+    'User-Agent': req.get('User-Agent') || 'Mozilla/5.0' }
+      ,
+      httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
     });
 
     const headers = { ...response.headers };
@@ -21,9 +24,9 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
     res.cacheControl = { maxAge: headers['cache-control'] };
     res.set(headers);
 
-    if (isStaticFiles) {
+    /*if (isStaticFiles) {
       return response.data.pipe(res);
-    }
+    }*/
 
     const transform = new LineTransform(baseUrl);
     response.data.pipe(transform).pipe(res);
