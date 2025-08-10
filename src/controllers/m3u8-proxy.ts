@@ -11,12 +11,17 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
     const baseUrl = url.replace(/[^/]+$/, "");
 
     const response = await axios.get(url, {
-      responseType: 'stream',
-      headers: { Accept: "*/*", Referer: "https://cdn.dotstream.buzz/",
-    'User-Agent': req.get('User-Agent') || 'Mozilla/5.0' }
-      ,
-      httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
-    });
+  responseType: 'stream',
+  headers: {
+    Accept: "*/*",
+    Referer: "https://cdn.dotstream.buzz/",
+    Origin: "https://cdn.dotstream.buzz",
+    Host: new URL(url).host,
+    'User-Agent': req.get('User-Agent') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+  },
+  httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
+});
+
 
     const headers = { ...response.headers };
     if (!isStaticFiles) delete headers['content-length'];
@@ -28,8 +33,8 @@ export const m3u8Proxy = async (req: Request, res: Response) => {
       return response.data.pipe(res);
     }*/
 
-    const transform = new LineTransform(baseUrl);
-    response.data.pipe(transform).pipe(res);
+    /*const transform = new LineTransform(baseUrl);
+    response.data.pipe(transform).pipe(res);*/
   } catch (error: any) {
     if (error.response) {
   console.error("Status:", error.response.status);
